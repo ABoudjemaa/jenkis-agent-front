@@ -2,8 +2,15 @@ FROM jenkins/inbound-agent
 
 USER root  
 
-# Installer Node.js et npm  
-RUN apk add --no-cache nodejs npm  
+# Check if the base image is Alpine or Debian and install Node.js accordingly
+RUN if [ -f /etc/alpine-release ]; then \
+        apk add --no-cache nodejs npm; \
+    else \
+        apt-get update && apt-get install -y nodejs npm; \
+    fi
 
-# Installer Jest  
-RUN npm install --global jest  
+# Install Jest globally
+RUN npm install --global jest
+
+# Verify installations
+RUN node -v && npm -v && jest --version
